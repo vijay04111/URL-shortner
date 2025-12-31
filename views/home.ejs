@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL Shortener</title>
+  <style>
+   body {
+  font-family: Arial;
+  background: #f4f6f8;
+  padding: 40px;
+}
+
+h2 {
+  text-align: center;
+}
+
+form {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+input {
+  width: 350px;
+  padding: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* 🔥 TABLE FIX START */
+.table-container {
+  width: 100%;
+  overflow-x: auto;   /* screen se bahar jaane par scroll */
+}
+
+table {
+  width: 100%;              /* 80% → 100% */
+  table-layout: fixed;      /* MOST IMPORTANT */
+  border-collapse: collapse;
+  background: white;
+}
+/* 🔥 TABLE FIX END */
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+th {
+  background: #333;
+  color: white;
+}
+
+a {
+  color: blue;
+  text-decoration: none;
+}
+
+/* 🔥 Redirect URL column control */
+td:nth-child(2) {
+  max-width: 300px;
+  white-space: normal;
+}
+
+  </style>
+</head>
+
+<body>
+  <h2>🔗 URL Shortener</h2>
+
+  <form action="/url" method="POST">
+    <input type="text" name="redirectURL" placeholder="Enter website URL" required />
+    <button type="submit">Generate</button>
+  </form>
+
+  <table >
+    <tr>
+      <th>Short ID</th>
+      <th>Redirect URL</th>
+      <th>Clicks</th>
+    </tr>
+
+    <% allUrls.forEach(url => { %>
+      <tr>
+        <td>
+          <a href="/<%= url.shortId %>" target="_blank">
+            <%= url.shortId %>
+          </a>
+        </td>
+        <td><%= url.redirectURL %></td>
+        <td><%= url.visitHistory.length %></td>
+      </tr>
+    <% }) %>
+  </table>
+</body>
+</html>
