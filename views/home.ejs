@@ -2,77 +2,172 @@
 <html>
 <head>
   <title>URL Shortener</title>
+
   <style>
-   body {
+/* ================== GLOBAL ================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
   font-family: Arial;
-  background: #f4f6f8;
+  min-height: 100vh;
   padding: 40px;
+
+  background: linear-gradient(270deg, #667eea, #764ba2, #43cea2, #cc7fd6);
+  background-size: 600% 600%;
+  animation: bgMove 15s ease infinite;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 h2 {
   text-align: center;
-}
-
-form {
-  text-align: center;
+  color: white;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.4);
   margin-bottom: 30px;
 }
 
-input {
-  width: 350px;
-  padding: 10px;
+/* ================== FORM ================== */
+form {
+  text-align: center;
+  margin-bottom: 40px;
 }
 
-button {
-  padding: 10px 20px;
-  background: #4CAF50;
+input {
+  width: 360px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Generate Button */
+form button {
+  padding: 12px 26px;
+  margin-left: 10px;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
   color: white;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 15px;
+  animation: pulse 2s infinite;
 }
 
-/* 🔥 TABLE FIX START */
+form button:hover {
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0,114,255,0.7); }
+  70% { box-shadow: 0 0 0 18px rgba(0,114,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,114,255,0); }
+}
+
+/* ================== TABLE ================== */
 .table-container {
   width: 100%;
-  overflow-x: auto;   /* screen se bahar jaane par scroll */
+  overflow-x: auto;
 }
 
 table {
-  width: 100%;              /* 80% → 100% */
-  table-layout: fixed;      /* MOST IMPORTANT */
+  width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.2);
 }
-/* 🔥 TABLE FIX END */
 
 th, td {
-  padding: 12px;
+  padding: 14px;
   border: 1px solid #ddd;
   text-align: center;
   word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
 th {
-  background: #333;
+  background: #111;
   color: white;
 }
 
+tr {
+  transition: all 0.3s ease;
+}
+
+tr:hover {
+  transform: translateY(-5px) scale(1.01);
+  background: #f2f8ff;
+}
+
 a {
-  color: blue;
+  color: #0072ff;
+  font-weight: bold;
   text-decoration: none;
 }
 
-/* 🔥 Redirect URL column control */
+/* Redirect URL column */
 td:nth-child(2) {
-  max-width: 300px;
+  max-width: 320px;
   white-space: normal;
 }
 
+/* ================== DELETE BUTTON ================== */
+.delete-btn {
+  background: linear-gradient(135deg, #ff4d4d, #e60000);
+  color: white;
+  border: none;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  animation: floatBtn 3s ease-in-out infinite;
+  box-shadow: 0 6px 14px rgba(255,0,0,0.5);
+}
+
+@keyframes floatBtn {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+.delete-btn:hover {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+/* ================== MOBILE ================== */
+@media (max-width: 600px) {
+  input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  form button {
+    margin-left: 0;
+    width: 100%;
+  }
+}
   </style>
 </head>
 
 <body>
+
   <h2>🔗 URL Shortener</h2>
 
   <form action="/url" method="POST">
@@ -80,24 +175,51 @@ td:nth-child(2) {
     <button type="submit">Generate</button>
   </form>
 
-  <table >
-    <tr>
-      <th>Short ID</th>
-      <th>Redirect URL</th>
-      <th>Clicks</th>
-    </tr>
-
-    <% allUrls.forEach(url => { %>
+  <div class="table-container">
+    <table>
       <tr>
-        <td>
-          <a href="/<%= url.shortId %>" target="_blank">
-            <%= url.shortId %>
-          </a>
-        </td>
-        <td><%= url.redirectURL %></td>
-        <td><%= url.visitHistory.length %></td>
+        <th>Short ID</th>
+        <th>Redirect URL</th>
+        <th>Clicks</th>
+        <th>Action</th>
       </tr>
-    <% }) %>
-  </table>
+
+      <% allUrls.forEach(url => { %>
+        <tr>
+          <td>
+            <a href="/<%= url.shortId %>" target="_blank">
+              <%= url.shortId %>
+            </a>
+          </td>
+
+          <td><%= url.redirectURL %></td>
+          <td><%= url.visitHistory.length %></td>
+
+          <td>
+            <button class="delete-btn"
+              onclick="deleteURL('<%= url.shortId %>')">
+              🗑️ Delete
+            </button>
+          </td>
+        </tr>
+      <% }) %>
+
+    </table>
+  </div>
+
+  <script>
+    async function deleteURL(shortId) {
+      if (!confirm("Are you sure?")) return;
+
+      const res = await fetch(`/url/${shortId}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      alert(data.msg);
+      location.reload();
+    }
+  </script>
+
 </body>
 </html>
