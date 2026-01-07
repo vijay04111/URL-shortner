@@ -8,18 +8,18 @@ router.get('/', async (req, res) => {
   res.render('home', { allUrls });
 });
 
+router.get('/form',(req,res)=>{
+  return res.render('signup')
+})
+
+
+router.get('/login',(req,res)=>{
+  return res.render('login')
+})
 
 
 
-// Redirect
-router.get('/:shortId', async (req, res) => {
-  const entry = await URL.findOneAndUpdate(
-    { shortId: req.params.shortId },
-    { $push: { visitHistory: { timestamp: Date.now() } } }
-  );
 
-  if (!entry) return res.status(404).send("URL not found");
-  res.redirect(entry.redirectURL);
-});
+
 
 module.exports = router;
