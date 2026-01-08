@@ -6,12 +6,12 @@ let userRouter = require('./routes/user')
 let staticRouter =require('./routes/static')
 let path = require('path')
 const cookieParser = require('cookie-parser');
-const { loginRestricaton } = require('./middleware/authMiddleware');
+
+
 
 connectionDB('mongodb://127.0.0.1:27017/url-shortner')
   .then(() => console.log("Connect with Mongo DB"))
   .catch(err => console.log(err));
-
 app.set('view engine', 'ejs');
 app.set('views', path.resolve('./views'));
 

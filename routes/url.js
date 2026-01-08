@@ -4,17 +4,21 @@ const URL = require('../models/url');
 const shortid = require('shortid');
 const { loginRestricaton } = require('../middleware/authMiddleware');
 
-router.post('/', loginRestricaton,async (req, res) => {
+router.post('/', loginRestricaton, async (req, res) => {
   const body = req.body;
 
-   let genrateID= shortid.generate()
+  let genrateID = shortid.generate();
+
   await URL.create({
-    shortId:genrateID,
-    redirectURL:body.redirectURL,
-    visitHistory: []
+    shortId: genrateID,
+    redirectURL: body.redirectURL,
+    visitHistory: [],
+    createdBy: req.user._id   // 👈 YE LINE ADD KAR
   });
+
   res.redirect('/');
 });
+
 
 
 // Redirect
@@ -30,10 +34,17 @@ router.get('/:shortId', async (req, res) => {
 
 
 
-router.delete('/:shortId', async (req, res) => {
-  const shortId = req.params.shortId;
-  await URL.findOneAndDelete({ shortId });
-  return res.json({ msg: "Data deleted" });
+router.delete('/:shortId', loginRestricaton, async (req, res) => {
+  const result = await URL.findOneAndDelete({
+    shortId: req.params.shortId,
+    createdBy: req.user._id
+  });
+
+  if (!result) {
+    return res.status(403).json({ msg: "Not allowed" });
+  }
+
+  res.json({ msg: "Deleted" });
 });
 
 
