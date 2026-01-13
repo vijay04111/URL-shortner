@@ -33,7 +33,6 @@ router.get('/:shortId', async (req, res) => {
 });
 
 
-
 router.delete('/:shortId', loginRestricaton, async (req, res) => {
   const result = await URL.findOneAndDelete({
     shortId: req.params.shortId,
